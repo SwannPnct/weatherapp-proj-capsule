@@ -86,7 +86,7 @@ router.get('/update-cities-data', async (req,res,next) => {
   for (let r = 0; r < cities_data.length; r++) {
     const result = request("GET",'https://api.openweathermap.org/data/2.5/weather?q='+cities_data[r].city+'&appid='+process.env.WEATHER_API_KEY+'&units=metric&lang=fr');
     const weatherResult = JSON.parse(result.getBody());
-    await CityModel.updateOne({city: cities_data[r].city}, {
+    await CityModel.updateOne({_id: cities_data[r]._id}, {
       weather: weatherResult.weather[0].description,
       icon: "http://openweathermap.org/img/wn/"+ weatherResult.weather[0].icon +".png",
       max: weatherResult.main.temp_max,
