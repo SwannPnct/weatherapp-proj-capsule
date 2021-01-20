@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <title>WeatherApp</title>
+</head>
+<body>
+
+
+    <!-- HEADER -->
+    <nav class=" header navbar navbar-light bg-dark">
+        Weather App
+       <a class="logout" href="/login">Deconnexion</a>
+   </nav> 
+
+
+   <!-- GRID -->
+
+   <div class="container">
+       <div class="row">
+           <div id="city_search" class="col-9 col-lg-9 d-flex flex-row-reverse">
+            <form method="POST" action="/add-city">
+                <div class="form-row">
+                  <div class="col-7">
+                    <input type="text" class="form-control" placeholder="enter city name" name="city_name">
+                  </div>
+                  <div class="col">
+                    <button type="submit" class="btn btn-warning">Add</button>
+                  </div>
+                </div>
+              </form>
+           </div>
+            <div id="map" class="col-9 col-lg-5">
+               <img class="img-fluid" src="/images/map.png" alt="Responsive image" style="width: 100% \9;">
+            </div>
+            <div id="city_list" class="col-8 col-lg-5">
+                <form method="GET" action="/update-cities-data">
+                    <label>Update Cities' Data</label>
+                    <button class="btn btn-light" type="submit"><em class="fas fa-sync"></em></button>
+                </form>
+
+
+                <% 
+                
+                if (error) { %>
+
+                    <h6 style="color: red;">There was an issue fetching this city's weather data. Try another city name or check your internet connection</h6>
+
+                    <%
+                }
+                %>
+
+
+                <% if(cityList.length == 0) { %>
+                    <h6 style="color: grey;">No cities found.</h6>
+               <%  } 
+               else { 
+
+                %>
+                <ul class="list-group">
+
+                    <% for (let i=0; i<cityList.length;i++) { %>
+
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            
+                            <%= cityList[i].city %>
+                            <div>
+                                <em><%= cityList[i].weather %></em>
+                                <img src=<%= cityList[i].icon %> alt="weather_icon">
+                                <span class="badge badge-warning badge-pill"><%= cityList[i].max %> °C</span>
+                                <span class="badge badge-secondary badge-pill"><%= cityList[i].min %> °C</span>
+                            </div>
+                            <a href="/delete-city?city=<%= cityList[i].city %>"><em class="far fa-times-circle" style="color:orange;"></em></a>
+                            
+                          </li>
+
+                   <% } %>
+                  </ul>
+                <%
+               } %> 
+            </div>
+       </div>
+   </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/a42e531037.js" crossorigin="anonymous"></script>
+</body>
+</html>
