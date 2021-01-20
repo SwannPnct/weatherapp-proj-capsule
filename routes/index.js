@@ -28,10 +28,10 @@ router.get(('/weather'), async (req,res,next) => {
 router.post('/add-city', async (req,res,next) => {
   
   const check = await CityModel.findOne({city: req.body.city_name.toLowerCase()});
-  console.log(check);
-  console.log("checking");
+  
+  
   if (check) {
-    console.log("it's != null");
+    
     
     res.render('weather', {
       cityList : await CityModel.find(),
