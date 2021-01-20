@@ -57,3 +57,7 @@ a {
   display: none;
   visibility: hidden;
 }
+
+#custom_list {
+  text-transform: capitalize;
+}

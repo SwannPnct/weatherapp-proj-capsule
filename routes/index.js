@@ -6,10 +6,6 @@ require('dotenv').config();
 
 const CityModel = require('./model/schemodel');
 
-//const cityList = [
-//]
-
-
 router.get(('/'), (req,res,next) => {
   res.render('login', {});
 })
@@ -31,9 +27,11 @@ router.get(('/weather'), async (req,res,next) => {
 
 router.post('/add-city', async (req,res,next) => {
   
-  const check = await CityModel.findOne({city: req.body.city_name});
-
-  if (check != null) {
+  const check = await CityModel.findOne({city: req.body.city_name.toLowerCase()});
+  console.log(check);
+  console.log("checking");
+  if (check) {
+    console.log("it's != null");
     
     res.render('weather', {
       cityList : await CityModel.find(),
@@ -55,7 +53,7 @@ router.post('/add-city', async (req,res,next) => {
   const weatherResult = JSON.parse(result.getBody());
   
   const newCity = new CityModel({
-    city: weatherResult.name,
+    city: weatherResult.name.toLowerCase(),
     weather: weatherResult.weather[0].description,
     icon: "http://openweathermap.org/img/wn/"+ weatherResult.weather[0].icon +".png",
     max: weatherResult.main.temp_max,
