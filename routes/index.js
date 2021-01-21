@@ -2,23 +2,64 @@ var express = require('express');
 var router = express.Router();
 const request = require('sync-request');
 
-require('dotenv').config();
-
-const CityModel = require('./model/schemodel');
+const CityModel = require('./model/cities');
+const UserModel = require('./model/user');
 
 router.get(('/'), (req,res,next) => {
-  res.render('login', {});
+  res.render('login', {isChecked: req.session.isChecked});
 })
 .get('/login', (req,res,next) => {
-  res.render('login', {});
+  res.redirect('/');
+})
+
+router.post('/sign-up', async (req,res,next) => {
+
+  const email_check = await UserModel.findOne({email: req.body.email});
+
+  if (email_check) {
+    req.session.isChecked = false;
+    res.redirect("/login");
+    return;
+  }
+
+  const newUser = new UserModel({
+    username : req.body.username,
+    email: req.body.email,
+    password: req.body.password
+  });
+  const newUserSaved = await newUser.save();
+  req.session.username = newUserSaved.username;
+  req.session.id = newUserSaved._id;
+  
+  req.session.isChecked = true;
+  res.redirect("/weather");
+  
 })
 
 
+router.post('/sign-in', async (req,res,next) => {
+
+  const login_check = await UserModel.findOne({
+    email: req.body.email,
+    password: req.body.password
+  })
+  if (login_check) {
+    req.session.username = login_check.username;
+    req.session.id = login_check._id;
+    res.redirect("/weather");
+  } else {
+    res.redirect("/login");
+  }
+})
+
+router.get('/logout', (req,res,next) => {
+  req.session.username = null;
+  req.session.id = null;
+  res.redirect('/login');
+})
+
 router.get(('/weather'), async (req,res,next) => {
-  
   let cityList = await CityModel.find();
-
-
   res.render('weather', {
     cityList,
     error: false

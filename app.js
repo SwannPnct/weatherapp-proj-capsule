@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -8,7 +10,16 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
-require('./routes/model/db');
+require('./routes/model/connect');
+const session = require('express-session');
+
+app.use(
+  session({ 
+  secret: process.env.SESSION_KEY, 
+  resave: false,
+  saveUninitialized: false,
+  })
+  );
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
