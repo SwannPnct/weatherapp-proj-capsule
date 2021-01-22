@@ -5,7 +5,9 @@ const citySchema = new mongoose.Schema({
     weather: String,
     icon: String,
     max: Number,
-    min: Number
+    min: Number,
+    lat: Number,
+    lon: Number
 })
 
 const CityModel = mongoose.model('weatherapp', citySchema);

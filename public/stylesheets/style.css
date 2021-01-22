@@ -61,3 +61,7 @@ a {
 #custom_list {
   text-transform: capitalize;
 }
+
+#worldmap {
+  height: 400px;
+}

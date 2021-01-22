@@ -3,62 +3,19 @@ var router = express.Router();
 const request = require('sync-request');
 
 const CityModel = require('./model/cities');
-const UserModel = require('./model/user');
 
-router.get(('/'), (req,res,next) => {
-  res.render('login', {isChecked: req.session.isChecked});
-})
-.get('/login', (req,res,next) => {
-  res.redirect('/');
+router.get('/', (req,res,next) => {
+  res.redirect('/users');
 })
 
-router.post('/sign-up', async (req,res,next) => {
 
-  const email_check = await UserModel.findOne({email: req.body.email});
+router.get(('/weather'), async (req,res,next) => {
 
-  if (email_check) {
-    req.session.isChecked = false;
-    res.redirect("/login");
+  if (!req.session.isLogged) {
+    res.redirect('/users');
     return;
   }
 
-  const newUser = new UserModel({
-    username : req.body.username,
-    email: req.body.email,
-    password: req.body.password
-  });
-  const newUserSaved = await newUser.save();
-  req.session.username = newUserSaved.username;
-  req.session.id = newUserSaved._id;
-  
-  req.session.isChecked = true;
-  res.redirect("/weather");
-  
-})
-
-
-router.post('/sign-in', async (req,res,next) => {
-
-  const login_check = await UserModel.findOne({
-    email: req.body.email,
-    password: req.body.password
-  })
-  if (login_check) {
-    req.session.username = login_check.username;
-    req.session.id = login_check._id;
-    res.redirect("/weather");
-  } else {
-    res.redirect("/login");
-  }
-})
-
-router.get('/logout', (req,res,next) => {
-  req.session.username = null;
-  req.session.id = null;
-  res.redirect('/login');
-})
-
-router.get(('/weather'), async (req,res,next) => {
   let cityList = await CityModel.find();
   res.render('weather', {
     cityList,
@@ -72,12 +29,7 @@ router.post('/add-city', async (req,res,next) => {
   
   
   if (check) {
-    
-    
-    res.render('weather', {
-      cityList : await CityModel.find(),
-      error: false
-    });
+    res.redirect('/weather');
     return;
   }
 
@@ -98,25 +50,21 @@ router.post('/add-city', async (req,res,next) => {
     weather: weatherResult.weather[0].description,
     icon: "http://openweathermap.org/img/wn/"+ weatherResult.weather[0].icon +".png",
     max: weatherResult.main.temp_max,
-    min: weatherResult.main.temp_min
+    min: weatherResult.main.temp_min,
+    lat: weatherResult.coord.lat,
+    lon: weatherResult.coord.lon
   })
 
   const citySaved = await newCity.save();
 
-  res.render('weather', {
-    cityList : await CityModel.find(),
-    error: false
-  })
+  res.redirect('/weather');
 })
 
 router.get('/delete-city', async (req,res,next) => {
   
   await CityModel.deleteOne({city: req.query.city});
 
-  res.render('weather', {
-    cityList: await CityModel.find(),
-    error: false
-  })
+  res.redirect('/weather');
 })
 
 router.get('/update-cities-data', async (req,res,next) => {
@@ -133,10 +81,7 @@ router.get('/update-cities-data', async (req,res,next) => {
     })
 }
 
-  res.render('weather', {
-    cityList: await CityModel.find(),
-    error: false
-  })
+res.redirect('/weather');  
 
 })
 
